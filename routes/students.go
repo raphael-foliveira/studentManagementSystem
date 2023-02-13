@@ -1,0 +1,18 @@
+package routes
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/raphael-foliveira/studentManagementSystem/controllers"
+)
+
+func addStudentsRoutes(router *gin.Engine) {
+	students := router.Group("/students")
+
+	students.GET("/", controllers.ListStudents)
+	students.GET("/:id", controllers.RetrieveStudent)
+
+	students.POST("/", controllers.CreateStudent)
+	students.PUT("/:id", controllers.UpdateStudent)
+
+	students.DELETE("/:id", controllers.DeleteStudent)
+}
