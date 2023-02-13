@@ -16,8 +16,13 @@ func ListStudents(c *gin.Context) {
 }
 
 func RetrieveStudent(c *gin.Context) {
+	studentId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "invalid id")
+		return
+	}
 	var student models.Student
-	db.Db.Model(&models.Student{}).Preload("CurrentClasses").First(&student, c.Param("id"))
+	db.Db.Model(&models.Student{}).Preload("CurrentClasses").First(&student, studentId)
 	if student.ID == 0 {
 		c.JSON(http.StatusOK, gin.H{})
 		return
@@ -29,24 +34,25 @@ func CreateStudent(c *gin.Context) {
 	var newStudent models.Student
 	if (c.BindJSON(&newStudent)) == nil {
 		db.Db.Create(&newStudent)
+		c.JSON(http.StatusCreated, newStudent)
+		return
 	}
-	c.JSON(http.StatusCreated, newStudent)
 }
 
 func UpdateStudent(c *gin.Context) {
 	studentId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid id",
-		})
+		c.JSON(http.StatusBadRequest, "invalid id")
 		return
 	}
 	student := models.Student{ID: uint(studentId)}
 	db.Db.First(&models.Student{}).Preload("CurrentClasses").First(&student)
-	if (c.BindJSON(&student)) == nil {
+	if (c.BindJSON(&student)) == nil && student.ID == uint(studentId) {
 		db.Db.Save(&student)
+		c.JSON(http.StatusOK, student)
+		return
 	}
-	c.JSON(http.StatusOK, student)
+	c.JSON(http.StatusBadRequest, "invalid operation")
 }
 
 func DeleteStudent(c *gin.Context) {

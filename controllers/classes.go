@@ -36,9 +36,7 @@ func CreateClass(c *gin.Context) {
 func DeleteClass(c *gin.Context) {
 	classId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid id",
-		})
+		c.JSON(http.StatusBadRequest, "invalid id")
 	}
 	deletedClass := models.Class{ID: uint(classId)}
 	db.Db.Delete(&deletedClass)
