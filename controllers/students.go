@@ -39,6 +39,7 @@ func UpdateStudent(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid id",
 		})
+		return
 	}
 	student := models.Student{ID: uint(studentId)}
 	db.Db.First(&models.Student{}).Preload("CurrentClasses").First(&student)
