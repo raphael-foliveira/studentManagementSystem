@@ -21,6 +21,7 @@ func RetrieveClass(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "invalid id")
 		return
 	}
+	fmt.Println(classId)
 	class := models.Class{}
 	class.Find(uint(classId))
 	c.JSON(http.StatusOK, class)

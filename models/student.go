@@ -11,7 +11,7 @@ type Student struct {
 	LastName  string         `json:"lastName"`
 	Email     string         `json:"email"`
 	Course    string         `json:"course"`
-	Classes   []Class        `json:"classes,omitempty" gorm:"many2many:student_classes"`
+	Classes   []Class        `json:"classes,omitempty" gorm:"many2many:StudentClasses"`
 	Semester  int            `json:"semester"`
 	DeletedAt gorm.DeletedAt `json:"-"`
 }
