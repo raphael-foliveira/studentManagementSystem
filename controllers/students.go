@@ -1,17 +1,17 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/raphael-foliveira/studentManagementSystem/db"
 	"github.com/raphael-foliveira/studentManagementSystem/models"
 )
 
 func ListStudents(c *gin.Context) {
-	var students []models.Student
-	db.Db.Model(&models.Student{}).Preload("CurrentClasses").Find(&students)
+	manager := models.Student{}
+	var students = manager.All()
 	c.JSON(http.StatusOK, students)
 }
 
@@ -21,22 +21,21 @@ func RetrieveStudent(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "invalid id")
 		return
 	}
-	var student models.Student
-	db.Db.Model(&models.Student{}).Preload("CurrentClasses").First(&student, studentId)
-	if student.ID == 0 {
-		c.JSON(http.StatusOK, gin.H{})
-		return
-	}
+	student := models.Student{}
+	student.Find(uint(studentId))
 	c.JSON(http.StatusOK, student)
 }
 
 func CreateStudent(c *gin.Context) {
 	var newStudent models.Student
-	if (c.BindJSON(&newStudent)) == nil {
-		db.Db.Create(&newStudent)
-		c.JSON(http.StatusCreated, newStudent)
+	fmt.Println("creating student")
+	if err := (c.BindJSON(&newStudent)); err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
+	newStudent.Create()
+	c.JSON(http.StatusCreated, newStudent)
 }
 
 func UpdateStudent(c *gin.Context) {
@@ -45,16 +44,24 @@ func UpdateStudent(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "invalid id")
 		return
 	}
-	student := models.Student{ID: uint(studentId)}
-	db.Db.First(&models.Student{}).Preload("CurrentClasses").First(&student)
-	if (c.BindJSON(&student)) == nil && student.ID == uint(studentId) {
-		db.Db.Save(&student)
-		c.JSON(http.StatusOK, student)
+	student := models.Student{}
+	student.Find(uint(studentId))
+	if err := c.BindJSON(&student); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusBadRequest, "invalid operation")
+	fmt.Println("about to run Update()")
+	student.Update(uint(studentId))
+	c.JSON(http.StatusOK, student)
 }
 
 func DeleteStudent(c *gin.Context) {
-	db.Db.Delete(&models.Student{}, c.Param("id"))
+	studentId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "invalid id")
+		return
+	}
+	student := models.Student{}
+	student.Delete(uint(studentId))
+	c.JSON(http.StatusNoContent, nil)
 }

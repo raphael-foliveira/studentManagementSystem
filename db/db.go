@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/raphael-foliveira/studentManagementSystem/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -28,9 +27,6 @@ func GetDb() (err error) {
 	}
 
 	fmt.Println("running migrations...")
-	err = Db.AutoMigrate(&models.Student{}, &models.Class{})
-	if err != nil {
-		return err
-	}
+
 	return nil
 }

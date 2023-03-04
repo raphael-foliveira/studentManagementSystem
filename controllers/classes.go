@@ -1,35 +1,39 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/raphael-foliveira/studentManagementSystem/db"
 	"github.com/raphael-foliveira/studentManagementSystem/models"
 )
 
 func ListClasses(c *gin.Context) {
-	var classes []models.Class
-	db.Db.Model(&models.Class{}).Preload("Students").Find(&classes)
+	class := models.Class{}
+	classes := class.All()
 	c.JSON(http.StatusOK, classes)
 }
 
 func RetrieveClass(c *gin.Context) {
-	var class models.Class
-	db.Db.Model(&models.Class{}).Preload("Students").First(&class, c.Param("id"))
-	if class.ID == 0 {
-		c.JSON(http.StatusOK, gin.H{})
+	classId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "invalid id")
 		return
 	}
+	class := models.Class{}
+	class.Find(uint(classId))
 	c.JSON(http.StatusOK, class)
 }
 
 func CreateClass(c *gin.Context) {
 	var newClass models.Class
-	if c.BindJSON(&newClass) == nil {
-		db.Db.Create(&newClass)
+	if err := c.BindJSON(&newClass); err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, err)
+		return
 	}
+	newClass.Create()
 	c.JSON(http.StatusCreated, newClass)
 }
 
@@ -37,8 +41,9 @@ func DeleteClass(c *gin.Context) {
 	classId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, "invalid id")
+		return
 	}
-	deletedClass := models.Class{ID: uint(classId)}
-	db.Db.Delete(&deletedClass)
-	c.JSON(http.StatusOK, deletedClass)
+	class := models.Class{}
+	class.Delete(uint(classId))
+	c.JSON(http.StatusNoContent, nil)
 }
