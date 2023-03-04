@@ -47,6 +47,7 @@ func UpdateStudent(c *gin.Context) {
 	student := models.Student{}
 	student.Find(uint(studentId))
 	if err := c.BindJSON(&student); err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}

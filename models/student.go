@@ -6,14 +6,14 @@ import (
 )
 
 type Student struct {
-	ID        uint    `gorm:"primaryKey"`
-	FirstName string  `json:"firstName"`
-	LastName  string  `json:"lastName"`
-	Email     string  `json:"email"`
-	Course    string  `json:"course"`
-	Classes   []Class `json:"classes" gorm:"many2many:student_classes"`
-	Semester  int     `json:"semester"`
-	DeletedAt gorm.DeletedAt
+	ID        uint           `gorm:"primaryKey"`
+	FirstName string         `json:"firstName"`
+	LastName  string         `json:"lastName"`
+	Email     string         `json:"email"`
+	Course    string         `json:"course"`
+	Classes   []Class        `json:"classes,omitempty" gorm:"many2many:student_classes"`
+	Semester  int            `json:"semester"`
+	DeletedAt gorm.DeletedAt `json:"-"`
 }
 
 func (s *Student) All() []Student {
@@ -23,7 +23,7 @@ func (s *Student) All() []Student {
 }
 
 func (s *Student) Find(id uint) {
-	db.Db.Model(s).Preload("Classes").First(s, id)
+	db.Db.Model(s).Preload("Classes.Teacher").First(s, id)
 }
 
 func (s *Student) Create() {

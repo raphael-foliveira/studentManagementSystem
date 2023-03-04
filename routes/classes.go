@@ -13,4 +13,6 @@ func addClassesRoutes(router *gin.Engine) {
 	classes.POST("/", controllers.CreateClass)
 
 	classes.DELETE("/:id", controllers.DeleteClass)
+
+	classes.POST("/:id/students/:studentId", controllers.AddStudentToClass)
 }

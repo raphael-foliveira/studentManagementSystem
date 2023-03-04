@@ -6,11 +6,11 @@ import (
 )
 
 type Teacher struct {
-	ID        uint    `gorm:"primaryKey"`
-	FirstName string  `json:"firstName"`
-	LastName  string  `json:"lastName"`
-	Classes   []Class `json:"classes"`
-	DeletedAt gorm.DeletedAt
+	ID        uint           `gorm:"primaryKey"`
+	FirstName string         `json:"firstName"`
+	LastName  string         `json:"lastName"`
+	Classes   []Class        `json:"classes,omitempty"`
+	DeletedAt gorm.DeletedAt `json:"-"`
 }
 
 func (t *Teacher) All() []Teacher {

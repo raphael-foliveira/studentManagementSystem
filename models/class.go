@@ -9,8 +9,8 @@ type Class struct {
 	ID        uint           `gorm:"primaryKey"`
 	Name      string         `json:"name"`
 	Students  []Student      `json:"students" gorm:"many2many:student_classes"`
-	TeacherID uint           `json:"-"`
-	Teacher   Teacher        `json:"teacher"`
+	TeacherID uint           `json:"teacherId"`
+	Teacher   Teacher        `json:"teacher,omitempty"`
 	DeletedAt gorm.DeletedAt `json:"-"`
 }
 
