@@ -8,5 +8,5 @@ type StudentClasses struct {
 	Student   Student
 	ClassID   uint `json:"-"`
 	Class     Class
-	DeletedAt gorm.DeletedAt
+	DeletedAt gorm.DeletedAt `json:"-"`
 }
