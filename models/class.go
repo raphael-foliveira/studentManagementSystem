@@ -11,7 +11,7 @@ type Class struct {
 	Students  []Student      `json:"students" gorm:"many2many:student_classes"`
 	TeacherID uint           `json:"teacherId"`
 	Teacher   Teacher        `json:"teacher,omitempty"`
-	DeletedAt gorm.DeletedAt `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"deletedAt,omitempty"`
 }
 
 func (c *Class) All() []Class {

@@ -10,7 +10,7 @@ type Teacher struct {
 	FirstName string         `json:"firstName"`
 	LastName  string         `json:"lastName"`
 	Classes   []Class        `json:"classes,omitempty"`
-	DeletedAt gorm.DeletedAt `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"deletedAt,omitempty"`
 }
 
 func (t *Teacher) All() []Teacher {
